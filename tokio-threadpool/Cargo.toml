@@ -17,7 +17,7 @@ tokio-executor = { version = "0.1.1", path = "../tokio-executor" }
 futures = "0.1.19"
 crossbeam-deque = "0.3"
 num_cpus = "1.2"
-rand = "0.4"
+rand = {path = "../../rand"}
 log = "0.4"
 
 # Futures 0.2 integration

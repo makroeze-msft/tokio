@@ -24,7 +24,7 @@ use std::sync::atomic::Ordering::{Acquire, AcqRel, Release, Relaxed};
 use std::sync::atomic::AtomicUsize;
 use std::sync::Arc;
 
-use rand::{Rng, SeedableRng, XorShiftRng};
+use rand::{Rng, SeedableRng, XorShiftRng, RngCore};
 
 #[derive(Debug)]
 pub(crate) struct Inner {
@@ -399,19 +399,43 @@ impl Inner {
             #[cfg(target_pointer_width = "32")]
             fn new_rng(thread_id: usize) -> XorShiftRng {
                 XorShiftRng::from_seed([
-                    thread_id as u32,
-                    0x00000000,
-                    0xa8a7d469,
-                    0x97830e05])
+                    thread_id as u8,
+                    (thread_id >> 8) as u8,
+                    (thread_id >> 16) as u8,
+                    (thread_id >> 24) as u8,
+                    0x0,
+                    0x0,
+                    0x0,
+                    0x0,
+                    0xa8,
+                    0xa7,
+                    0xd4,
+                    0x69,
+                    0x97,
+                    0x83,
+                    0x0e,
+                    0x05])
             }
 
             #[cfg(target_pointer_width = "64")]
             fn new_rng(thread_id: usize) -> XorShiftRng {
                 XorShiftRng::from_seed([
-                    thread_id as u32,
-                    (thread_id >> 32) as u32,
-                    0xa8a7d469,
-                    0x97830e05])
+                    thread_id as u8,
+                    (thread_id >> 8) as u8,
+                    (thread_id >> 16) as u8,
+                    (thread_id >> 24) as u8,
+                    0x0,
+                    0x0,
+                    0x0,
+                    0x0,
+                    0xa8,
+                    0xa7,
+                    0xd4,
+                    0x69,
+                    0x97,
+                    0x83,
+                    0x0e,
+                    0x05])
             }
 
             let thread_id = self.next_thread_id.fetch_add(1, Relaxed);
